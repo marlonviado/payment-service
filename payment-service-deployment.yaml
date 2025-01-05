@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment-sevice-dep
+  name: payment-sevice-app
 spec:
   selector:
     matchLabels:
-      app: payment-sevice-dep
+      app: payment-sevice-app
   template:
     metadata:
       labels:
-        app: payment-sevice-dep
+        app: payment-sevice-app
     spec:
       containers:
-      - name: payment-sevice-dep
-        image: mfviado/payment-service:2.0
+      - name: payment-sevice-app
+        image: mfviado/payment-service:latest
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -53,7 +53,7 @@ metadata:
   name: payment-service-svc
 spec:
   selector:
-    app: payment-sevice-dep
+    app: payment-sevice-app
   ports:
   - port: 80
     protocol: TCP  
