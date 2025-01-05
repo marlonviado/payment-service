@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-sevice-dep
+spec:
+  selector:
+    matchLabels:
+      app: payment-sevice-dep
+  template:
+    metadata:
+      labels:
+        app: payment-sevice-dep
+    spec:
+      containers:
+      - name: payment-sevice-dep
+        image: mfviado/payment-service:2.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "0.5"       
+        ports:
+        - containerPort: 8082
+          protocol: TCP
+        env:
+          - name: GATEWAY
+            value: http://gateway-service-svc
+          - name: DB_HOST
+            value: jdbc:mysql://mysql:3306/${DB_NAME}?useSSL=false&serverTimezone=UTC&autoReconnect=true&allowPublicKeyRetrieval=true
+          - name: DB_NAME
+            value: shoppingcart
+          - name: DB_USERNAME
+            value: root
+          - name: DB_PASSWORD
+            value: root
+          - name: CONFIG_SERVER_URL
+            value: http://config-service-svc
+            #valueFrom:
+            #  configMapKeyRef:
+            #    name: config-cm
+            #    key: config_url
+
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service-svc
+spec:
+  selector:
+    app: payment-sevice-dep
+  ports:
+  - port: 80
+    protocol: TCP  
+    targetPort: 8082
